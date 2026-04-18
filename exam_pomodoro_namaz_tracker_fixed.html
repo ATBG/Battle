@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exam Rotation Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    .glass {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    .soft-shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.28); }
+    .task:checked + label {
+      text-decoration: line-through;
+      opacity: 0.55;
+    }
+    .day-card {
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+    .day-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(96, 165, 250, 0.6);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="max-w-7xl mx-auto px-4 py-6 md:py-10">
+    <header class="glass soft-shadow rounded-3xl p-5 md:p-8 mb-6">
+      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-sky-300">Pomodoro Battle HUD</p>
+          <h1 class="text-3xl md:text-5xl font-black mt-2">Exam Rotation Tracker</h1>
+          <p class="text-slate-300 mt-2 max-w-3xl">
+            25 minutes study, 5 minutes break. Every 4 study cycles gets a 15-minute reset.
+            Namaj, lunch, and dinner are hard blocks, so study slots slide forward automatically.
+          </p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-sm md:text-base min-w-[260px]">
+          <div class="rounded-2xl bg-slate-900/70 border border-slate-800 p-4">
+            <div class="text-slate-400">Mode</div>
+            <div class="font-semibold text-sky-300">High intensity</div>
+          </div>
+          <div class="rounded-2xl bg-slate-900/70 border border-slate-800 p-4">
+            <div class="text-slate-400">Rotation</div>
+            <div class="font-semibold text-emerald-300">25 / 5</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-3 md:grid-cols-3">
+        <div class="rounded-2xl bg-slate-900/70 border border-slate-800 p-4">
+          <div class="text-slate-400 text-sm">Progress</div>
+          <div class="mt-2 text-2xl font-bold"><span id="doneCount">0</span>/<span id="totalCount">0</span></div>
+          <div class="mt-3 h-2 rounded-full bg-slate-800 overflow-hidden">
+            <div id="progressBar" class="h-full w-0 rounded-full bg-sky-400 transition-all"></div>
+          </div>
+        </div>
+        <div class="rounded-2xl bg-slate-900/70 border border-slate-800 p-4">
+          <div class="text-slate-400 text-sm">Subject focus</div>
+          <div class="mt-2 flex flex-wrap gap-2 text-xs">
+            <span class="px-3 py-1 rounded-full bg-sky-400/15 text-sky-300 border border-sky-400/20">Physics + Math</span>
+            <span class="px-3 py-1 rounded-full bg-amber-400/15 text-amber-300 border border-amber-400/20">Chem + Bio</span>
+            <span class="px-3 py-1 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/20">Bangla + English</span>
+            <span class="px-3 py-1 rounded-full bg-violet-400/15 text-violet-300 border border-violet-400/20">ICT at night</span>
+          </div>
+        </div>
+        <div class="rounded-2xl bg-slate-900/70 border border-slate-800 p-4">
+          <div class="text-slate-400 text-sm">Hard blocks</div>
+          <div class="mt-2 text-sm text-slate-200">
+            Prayer, lunch, and dinner windows are protected. Study moves away from them automatically.
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="days" class="grid gap-5"></main>
+  </div>
+
+  <script>
+    const prayerTimes = {
+      "APR 19": { fajr: "4:19 AM", dhuhr: "12:02 PM", asr: "3:29 PM", maghrib: "6:25 PM", isha: "7:55 PM" },
+      "APR 20": { fajr: "4:18 AM", dhuhr: "12:02 PM", asr: "3:29 PM", maghrib: "6:26 PM", isha: "7:56 PM" },
+      "APR 21": { fajr: "4:17 AM", dhuhr: "12:02 PM", asr: "3:28 PM", maghrib: "6:26 PM", isha: "7:56 PM" },
+      "APR 22": { fajr: "4:16 AM", dhuhr: "12:02 PM", asr: "3:28 PM", maghrib: "6:27 PM", isha: "7:57 PM" },
+      "APR 23": { fajr: "4:15 AM", dhuhr: "12:01 PM", asr: "3:28 PM", maghrib: "6:27 PM", isha: "7:57 PM" },
+      "APR 24": { fajr: "4:14 AM", dhuhr: "12:01 PM", asr: "3:28 PM", maghrib: "6:27 PM", isha: "7:57 PM" },
+      "APR 25": { fajr: "4:13 AM", dhuhr: "12:01 PM", asr: "3:27 PM", maghrib: "6:28 PM", isha: "7:58 PM" },
+      "APR 26": { fajr: "4:12 AM", dhuhr: "12:01 PM", asr: "3:27 PM", maghrib: "6:28 PM", isha: "7:58 PM" },
+      "APR 27": { fajr: "4:11 AM", dhuhr: "12:01 PM", asr: "3:27 PM", maghrib: "6:29 PM", isha: "7:59 PM" },
+      "APR 28": { fajr: "4:10 AM", dhuhr: "12:01 PM", asr: "3:26 PM", maghrib: "6:29 PM", isha: "7:59 PM" },
+      "APR 29": { fajr: "4:09 AM", dhuhr: "12:00 PM", asr: "3:26 PM", maghrib: "6:30 PM", isha: "8:00 PM" },
+      "APR 30": { fajr: "4:08 AM", dhuhr: "12:00 PM", asr: "3:26 PM", maghrib: "6:30 PM", isha: "8:00 PM" },
+      "MAY 1": { fajr: "4:10 AM", dhuhr: "12:01 PM", asr: "3:26 PM", maghrib: "6:32 PM", isha: "7:52 PM" },
+      "MAY 2": { fajr: "4:09 AM", dhuhr: "12:00 PM", asr: "3:25 PM", maghrib: "6:32 PM", isha: "7:52 PM" },
+      "MAY 3": { fajr: "4:08 AM", dhuhr: "12:00 PM", asr: "3:25 PM", maghrib: "6:33 PM", isha: "7:53 PM" },
+      "MAY 4": { fajr: "4:07 AM", dhuhr: "12:00 PM", asr: "3:25 PM", maghrib: "6:33 PM", isha: "7:54 PM" }
+    };
+
+    const mealWindows = [
+      { label: 'Lunch', start: '12:45 PM', duration: 45 },
+      { label: 'Dinner', start: '7:00 PM', duration: 45 }
+    ];
+
+    const days = [
+      {
+        date: 'APR 19',
+        title: 'Night after college',
+        focus: 'Light load + activation mode',
+        note: 'Warm brain, not burnout. No deep problem sets yet.',
+        startHour: 21,
+        blocks: ['Physics SAQ', 'ICT MCQ', 'Bangla CQ', 'Math practice', 'Chemistry MCQ', 'Zoology MCQ', 'English format', 'Botany MCQ', 'Physics MCQ', 'ICT CQ']
+      },
+      {
+        date: 'APR 20',
+        title: 'College day',
+        focus: 'Stabilize weak areas',
+        note: 'Keep it controlled, no overload.',
+        startHour: 21,
+        blocks: ['Math matrices', 'Physics Chap 4 numericals', 'ICT logic gates', 'Bangla prose CQ', 'Chemistry MCQ', 'Zoology digestion', 'English writing format', 'Botany', 'Physics MCQ', 'Revision mix']
+      },
+      {
+        date: 'APR 21',
+        title: 'Full free day',
+        focus: 'Heavy physics + math build',
+        note: 'Max pressure day. Push volume hard.',
+        startHour: 10,
+        blocks: ['Physics numericals', 'Math problem set', 'Physics SAQ', 'Math trig', 'Chemistry MCQ', 'Physics MCQ', 'Math practice', 'Physics review', 'Physics Chap 5 / 6 / 10 rotation', 'Night cycle: ICT', 'Bangla', 'Physics', 'Math', 'Chemistry', 'Zoology', 'English', 'Physics', 'Bio']
+      },
+      {
+        date: 'APR 22',
+        title: 'Full free day + ICT prep',
+        focus: 'Physics / Math patching, ICT night lock-in',
+        note: 'Daytime stays useful. ICT gets the night push.',
+        startHour: 10,
+        blocks: ['Physics weak topic patch', 'Math weak topic patch', 'Physics SAQ', 'Math revision', 'Physics MCQ', 'Light summary review', 'ICT CQ', 'ICT MCQ', 'ICT revision', 'Bangla', 'ICT', 'English', 'ICT', 'Physics light', 'ICT CQ', 'ICT MCQ', 'ICT revision']
+      },
+      {
+        date: 'APR 23',
+        title: 'ICT exam day',
+        focus: 'After exam, switch to Chemistry',
+        note: 'Chemistry starts domination immediately at night.',
+        startHour: 10,
+        blocks: ['Chemistry MCQ', 'CQ', 'Chemistry past paper', 'Physics light', 'Chemistry', 'Math', 'Biology', 'Chemistry', 'English']
+      },
+      {
+        date: 'APR 24',
+        title: 'Chemistry core day 1',
+        focus: 'Chem heavy grinding',
+        note: 'Stick to the rotation and keep weak zones moving.',
+        startHour: 10,
+        blocks: ['Chem MCQ', 'CQ', 'Physics', 'Chem past paper', 'Math', 'Chem', 'Bio', 'Chem', 'ICT light', 'Chem', 'Chem recap']
+      },
+      {
+        date: 'APR 25',
+        title: 'Chemistry core day 2',
+        focus: 'Chem heavy grinding',
+        note: 'Keep the pressure clean and steady.',
+        startHour: 10,
+        blocks: ['Chem MCQ', 'CQ', 'Physics', 'Chem past paper', 'Math', 'Chem', 'Bio', 'Chem', 'ICT light', 'Chem', 'Chem recap']
+      },
+      {
+        date: 'APR 26',
+        title: 'Chem done / Bangla shift',
+        focus: 'Bangla survival + English scoring formats',
+        note: 'Start writing speed and grammar structure.',
+        startHour: 10,
+        blocks: ['Bangla', 'English', 'Bangla', 'Physics', 'Bangla', 'Chem recap', 'English', 'Bangla', 'Physics', 'Math']
+      },
+      {
+        date: 'APR 27',
+        title: 'Bangla exam',
+        focus: 'Night shift English prep',
+        note: 'English scoring templates only.',
+        startHour: 10,
+        blocks: ['English format', 'Bangla review', 'English writing', 'Physics', 'English', 'Chem', 'English', 'Math', 'Bio light']
+      },
+      {
+        date: 'APR 28',
+        title: 'English exam → Physics shift',
+        focus: 'Full physics dominance starts',
+        note: 'Physics chapters 4, 5, 6, 10 rotation.',
+        startHour: 10,
+        blocks: ['Physics Chap 4', 'Physics Chap 5', 'Physics Chap 6', 'Physics Chap 10', 'Physics SAQ', 'Physics MCQ', 'Math', 'Physics numericals', 'Chem light', 'Physics', 'Bio', 'Physics', 'ICT recall', 'Physics review']
+      },
+      {
+        date: 'APR 29',
+        title: 'Physics gap day',
+        focus: 'Pure physics mode',
+        note: 'Speed, accuracy, and weak zone cleanup.',
+        startHour: 10,
+        blocks: ['Physics numericals', 'Physics SAQ', 'Physics MCQ', 'Physics past paper', 'Math', 'Physics', 'Physics weak zones', 'Bio light', 'Physics', 'Revision']
+      },
+      {
+        date: 'APR 30',
+        title: 'Physics exam → Math start',
+        focus: 'Math first paper and second paper',
+        note: 'Keep the momentum alive.',
+        startHour: 10,
+        blocks: ['Math 1st paper', 'Math 2nd paper', 'Physics recap', 'Math', 'Bio', 'Math', 'Chem light', 'Math', 'English', 'Math']
+      },
+      {
+        date: 'MAY 1',
+        title: 'Math core day 1',
+        focus: 'Speed + accuracy',
+        note: 'Max output day. Heavy volume is allowed here.',
+        startHour: 10,
+        blocks: ['Math', 'Math', 'Bio', 'Math', 'Physics', 'Math', 'Bio', 'Math', 'English', 'Math']
+      },
+      {
+        date: 'MAY 2',
+        title: 'Math core day 2',
+        focus: 'Speed + accuracy',
+        note: 'Keep the math engine hot.',
+        startHour: 10,
+        blocks: ['Math', 'Math', 'Bio', 'Math', 'Physics', 'Math', 'Bio', 'Math', 'English', 'Math']
+      },
+      {
+        date: 'MAY 3',
+        title: 'Math exam → Bio start',
+        focus: 'Biology entry mode',
+        note: 'Switch cleanly into memory-heavy work.',
+        startHour: 10,
+        blocks: ['Biology MCQ', 'CQ', 'Zoology', 'Bio', 'Chem light', 'Bio', 'Physics', 'Bio', 'Math recap', 'Bio']
+      },
+      {
+        date: 'MAY 4',
+        title: 'Bio final',
+        focus: 'Final push cycle',
+        note: 'Revision lock. Do not overcomplicate.',
+        startHour: 10,
+        blocks: ['Bio MCQ', 'CQ', 'Zoology', 'Bio', 'Chem recap', 'Bio', 'Physics', 'English', 'Revision lock']
+      }
+    ];
+
+    function parseClock(value) {
+      const match = String(value).trim().match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);
+      if (!match) return null;
+      let hour = Number(match[1]);
+      const minute = Number(match[2]);
+      const period = match[3].toUpperCase();
+      if (period === 'AM') {
+        if (hour === 12) hour = 0;
+      } else if (hour !== 12) {
+        hour += 12;
+      }
+      return hour * 60 + minute;
+    }
+
+    function formatClock(totalMinutes) {
+      const h24 = Math.floor(totalMinutes / 60) % 24;
+      const h12 = h24 % 12 || 12;
+      const ampm = h24 >= 12 ? 'PM' : 'AM';
+      const m = totalMinutes % 60;
+      return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
+    }
+
+    function buildFixedWindows(dayKey) {
+      const p = prayerTimes[dayKey];
+      const prayerBlocks = [
+        { label: 'Fajr', start: p.fajr, duration: 20 },
+        { label: 'Dhuhr', start: p.dhuhr, duration: 20 },
+        { label: 'Asr', start: p.asr, duration: 20 },
+        { label: 'Maghrib', start: p.maghrib, duration: 20 },
+        { label: 'Isha', start: p.isha, duration: 20 }
+      ].map(item => ({
+        label: item.label,
+        start: parseClock(item.start),
+        end: parseClock(item.start) + item.duration,
+        kind: 'prayer'
+      }));
+
+      const meals = mealWindows.map(item => ({
+        label: item.label,
+        start: parseClock(item.start),
+        end: parseClock(item.start) + item.duration,
+        kind: 'meal'
+      }));
+
+      return [...prayerBlocks, ...meals].sort((a, b) => a.start - b.start);
+    }
+
+    function resolveStart(startMinutes, duration, windows) {
+      let current = startMinutes;
+      while (true) {
+        const overlap = windows.find(w => current < w.end && (current + duration) > w.start);
+        if (!overlap) return current;
+        current = overlap.end;
+      }
+    }
+
+    function nextBreakLength(studyCount) {
+      return studyCount % 4 === 0 ? 15 : 5;
+    }
+
+    function blockClass(type) {
+      if (type === 'study') return 'border-slate-700 bg-slate-900/80 text-slate-100';
+      if (type === 'break') return 'border-amber-400/20 bg-amber-400/8 text-amber-200';
+      if (type === 'forced') return 'border-emerald-400/20 bg-emerald-400/8 text-emerald-200';
+      return 'border-slate-700 bg-slate-900/80 text-slate-100';
+    }
+
+    function renderPrayerPanel(dayKey) {
+      const p = prayerTimes[dayKey];
+      return `
+        <div class="mt-4 rounded-2xl border border-emerald-400/20 bg-emerald-400/8 p-4 text-sm text-emerald-100">
+          <div class="font-semibold mb-2">Prayer times for ${dayKey}</div>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs md:text-sm">
+            <div class="rounded-xl bg-slate-950/40 px-3 py-2">Fajr<br><span class="font-semibold">${p.fajr}</span></div>
+            <div class="rounded-xl bg-slate-950/40 px-3 py-2">Dhuhr<br><span class="font-semibold">${p.dhuhr}</span></div>
+            <div class="rounded-xl bg-slate-950/40 px-3 py-2">Asr<br><span class="font-semibold">${p.asr}</span></div>
+            <div class="rounded-xl bg-slate-950/40 px-3 py-2">Maghrib<br><span class="font-semibold">${p.maghrib}</span></div>
+            <div class="rounded-xl bg-slate-950/40 px-3 py-2">Isha<br><span class="font-semibold">${p.isha}</span></div>
+          </div>
+          <div class="mt-3 text-xs text-emerald-100/80">Study will move past these windows automatically.</div>
+        </div>
+      `;
+    }
+
+    function renderMealPanel() {
+      return `
+        <div class="mt-3 rounded-2xl border border-amber-400/20 bg-amber-400/8 p-4 text-sm text-amber-100">
+          <div class="font-semibold mb-2">Meal windows</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs md:text-sm">
+            <div class="rounded-xl bg-slate-950/40 px-3 py-2">Lunch<br><span class="font-semibold">12:45 PM - 1:30 PM</span></div>
+            <div class="rounded-xl bg-slate-950/40 px-3 py-2">Dinner<br><span class="font-semibold">7:00 PM - 7:45 PM</span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    const daysEl = document.getElementById('days');
+    let total = 0;
+
+    days.forEach((day, dayIndex) => {
+      const card = document.createElement('section');
+      card.className = 'day-card glass soft-shadow rounded-3xl p-5 md:p-6 border border-slate-800';
+      const windows = buildFixedWindows(day.date);
+
+      let currentMinutes = (day.startHour ?? 9) * 60;
+      let studyCount = 0;
+      const items = [];
+
+      day.blocks.forEach((text, index) => {
+        const start = resolveStart(currentMinutes, 25, windows);
+        if (start > currentMinutes) {
+          const blocking = windows.filter(w => currentMinutes < w.end && (start > w.start));
+          if (blocking.length) {
+            const names = [...new Set(blocking.map(b => b.label))].join(' + ');
+            items.push(`
+              <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('forced')}">
+                <div class="mt-1 h-4 w-4 rounded-full border border-emerald-300/60 bg-emerald-300/20"></div>
+                <div class="flex-1 text-sm md:text-base leading-6">
+                  ${formatClock(currentMinutes)} - Auto shift for ${names}
+                </div>
+              </div>
+            `);
+          }
+        }
+
+        const id = `d${dayIndex}_t${index}`;
+        items.push(`
+          <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('study')}">
+            <input id="${id}" class="task mt-1 h-4 w-4 rounded border-slate-500 bg-slate-900 text-sky-400 focus:ring-sky-400" type="checkbox" />
+            <label for="${id}" class="cursor-pointer flex-1 text-sm md:text-base leading-6">${formatClock(start)} - ${text}</label>
+          </div>
+        `);
+
+        total += 1;
+        currentMinutes = start + 25;
+        studyCount += 1;
+
+        if (index < day.blocks.length - 1) {
+          const breakLen = nextBreakLength(studyCount);
+          items.push(`
+            <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('break')}">
+              <div class="mt-1 h-4 w-4 rounded-full border border-amber-300/60 bg-amber-300/20"></div>
+              <div class="flex-1 text-sm md:text-base leading-6">${formatClock(currentMinutes)} - ${breakLen} min ${breakLen === 15 ? 'reset' : 'break'}</div>
+            </div>
+          `);
+          currentMinutes += breakLen;
+        }
+      });
+
+      card.innerHTML = `
+        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-sky-300">
+              <span class="px-2 py-1 rounded-full bg-sky-400/10 border border-sky-400/20">${day.date}</span>
+              <span>${day.title}</span>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold mt-3">${day.focus}</h2>
+            <p class="text-slate-300 mt-2 max-w-3xl">${day.note}</p>
+          </div>
+          <button class="resetBtn shrink-0 rounded-2xl border border-slate-700 bg-slate-900/80 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-sky-400/50 hover:text-sky-300 transition" type="button">Reset day</button>
+        </div>
+
+        ${renderPrayerPanel(day.date)}
+        ${renderMealPanel()}
+
+        <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">${items.join('')}</div>
+      `;
+
+      daysEl.appendChild(card);
+    });
+
+    document.getElementById('totalCount').textContent = total;
+
+    function updateProgress() {
+      const checks = Array.from(document.querySelectorAll('.task'));
+      const done = checks.filter(c => c.checked).length;
+      document.getElementById('doneCount').textContent = done;
+      const pct = checks.length ? Math.round((done / checks.length) * 100) : 0;
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    document.addEventListener('change', (e) => {
+      if (e.target.classList.contains('task')) updateProgress();
+    });
+
+    document.querySelectorAll('.resetBtn').forEach((btn, idx) => {
+      btn.addEventListener('click', () => {
+        const card = daysEl.children[idx];
+        card.querySelectorAll('.task').forEach(t => t.checked = false);
+        updateProgress();
+      });
+    });
+
+    updateProgress();
+  </script>
+</body>
+</html>
