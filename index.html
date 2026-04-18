@@ -38,6 +38,7 @@
           <p class="text-slate-300 mt-2 max-w-3xl">
             25 minutes study, 5 minutes break. Every 4 study cycles gets a 15-minute reset.
             Namaj, lunch, and dinner are hard blocks, so study slots slide forward automatically.
+            Free days now stretch late into the night.
           </p>
         </div>
         <div class="grid grid-cols-2 gap-3 text-sm md:text-base min-w-[260px]">
@@ -51,8 +52,7 @@
           </div>
         </div>
       </div>
-
-      <div class="mt-6 grid gap-3 md:grid-cols-3">
+          <div class="mt-6 grid gap-3 md:grid-cols-3">
         <div class="rounded-2xl bg-slate-900/70 border border-slate-800 p-4">
           <div class="text-slate-400 text-sm">Progress</div>
           <div class="mt-2 text-2xl font-bold"><span id="doneCount">0</span>/<span id="totalCount">0</span></div>
@@ -107,134 +107,22 @@
     ];
 
     const days = [
-      {
-        date: 'APR 19',
-        title: 'Night after college',
-        focus: 'Light load + activation mode',
-        note: 'Warm brain, not burnout. No deep problem sets yet.',
-        startHour: 21,
-        blocks: ['Physics SAQ', 'ICT MCQ', 'Bangla CQ', 'Math practice', 'Chemistry MCQ', 'Zoology MCQ', 'English format', 'Botany MCQ', 'Physics MCQ', 'ICT CQ']
-      },
-      {
-        date: 'APR 20',
-        title: 'College day',
-        focus: 'Stabilize weak areas',
-        note: 'Keep it controlled, no overload.',
-        startHour: 21,
-        blocks: ['Math matrices', 'Physics Chap 4 numericals', 'ICT logic gates', 'Bangla prose CQ', 'Chemistry MCQ', 'Zoology digestion', 'English writing format', 'Botany', 'Physics MCQ', 'Revision mix']
-      },
-      {
-        date: 'APR 21',
-        title: 'Full free day',
-        focus: 'Heavy physics + math build',
-        note: 'Max pressure day. Push volume hard.',
-        startHour: 10,
-        blocks: ['Physics numericals', 'Math problem set', 'Physics SAQ', 'Math trig', 'Chemistry MCQ', 'Physics MCQ', 'Math practice', 'Physics review', 'Physics Chap 5 / 6 / 10 rotation', 'Night cycle: ICT', 'Bangla', 'Physics', 'Math', 'Chemistry', 'Zoology', 'English', 'Physics', 'Bio']
-      },
-      {
-        date: 'APR 22',
-        title: 'Full free day + ICT prep',
-        focus: 'Physics / Math patching, ICT night lock-in',
-        note: 'Daytime stays useful. ICT gets the night push.',
-        startHour: 10,
-        blocks: ['Physics weak topic patch', 'Math weak topic patch', 'Physics SAQ', 'Math revision', 'Physics MCQ', 'Light summary review', 'ICT CQ', 'ICT MCQ', 'ICT revision', 'Bangla', 'ICT', 'English', 'ICT', 'Physics light', 'ICT CQ', 'ICT MCQ', 'ICT revision']
-      },
-      {
-        date: 'APR 23',
-        title: 'ICT exam day',
-        focus: 'After exam, switch to Chemistry',
-        note: 'Chemistry starts domination immediately at night.',
-        startHour: 10,
-        blocks: ['Chemistry MCQ', 'CQ', 'Chemistry past paper', 'Physics light', 'Chemistry', 'Math', 'Biology', 'Chemistry', 'English']
-      },
-      {
-        date: 'APR 24',
-        title: 'Chemistry core day 1',
-        focus: 'Chem heavy grinding',
-        note: 'Stick to the rotation and keep weak zones moving.',
-        startHour: 10,
-        blocks: ['Chem MCQ', 'CQ', 'Physics', 'Chem past paper', 'Math', 'Chem', 'Bio', 'Chem', 'ICT light', 'Chem', 'Chem recap']
-      },
-      {
-        date: 'APR 25',
-        title: 'Chemistry core day 2',
-        focus: 'Chem heavy grinding',
-        note: 'Keep the pressure clean and steady.',
-        startHour: 10,
-        blocks: ['Chem MCQ', 'CQ', 'Physics', 'Chem past paper', 'Math', 'Chem', 'Bio', 'Chem', 'ICT light', 'Chem', 'Chem recap']
-      },
-      {
-        date: 'APR 26',
-        title: 'Chem done / Bangla shift',
-        focus: 'Bangla survival + English scoring formats',
-        note: 'Start writing speed and grammar structure.',
-        startHour: 10,
-        blocks: ['Bangla', 'English', 'Bangla', 'Physics', 'Bangla', 'Chem recap', 'English', 'Bangla', 'Physics', 'Math']
-      },
-      {
-        date: 'APR 27',
-        title: 'Bangla exam',
-        focus: 'Night shift English prep',
-        note: 'English scoring templates only.',
-        startHour: 10,
-        blocks: ['English format', 'Bangla review', 'English writing', 'Physics', 'English', 'Chem', 'English', 'Math', 'Bio light']
-      },
-      {
-        date: 'APR 28',
-        title: 'English exam → Physics shift',
-        focus: 'Full physics dominance starts',
-        note: 'Physics chapters 4, 5, 6, 10 rotation.',
-        startHour: 10,
-        blocks: ['Physics Chap 4', 'Physics Chap 5', 'Physics Chap 6', 'Physics Chap 10', 'Physics SAQ', 'Physics MCQ', 'Math', 'Physics numericals', 'Chem light', 'Physics', 'Bio', 'Physics', 'ICT recall', 'Physics review']
-      },
-      {
-        date: 'APR 29',
-        title: 'Physics gap day',
-        focus: 'Pure physics mode',
-        note: 'Speed, accuracy, and weak zone cleanup.',
-        startHour: 10,
-        blocks: ['Physics numericals', 'Physics SAQ', 'Physics MCQ', 'Physics past paper', 'Math', 'Physics', 'Physics weak zones', 'Bio light', 'Physics', 'Revision']
-      },
-      {
-        date: 'APR 30',
-        title: 'Physics exam → Math start',
-        focus: 'Math first paper and second paper',
-        note: 'Keep the momentum alive.',
-        startHour: 10,
-        blocks: ['Math 1st paper', 'Math 2nd paper', 'Physics recap', 'Math', 'Bio', 'Math', 'Chem light', 'Math', 'English', 'Math']
-      },
-      {
-        date: 'MAY 1',
-        title: 'Math core day 1',
-        focus: 'Speed + accuracy',
-        note: 'Max output day. Heavy volume is allowed here.',
-        startHour: 10,
-        blocks: ['Math', 'Math', 'Bio', 'Math', 'Physics', 'Math', 'Bio', 'Math', 'English', 'Math']
-      },
-      {
-        date: 'MAY 2',
-        title: 'Math core day 2',
-        focus: 'Speed + accuracy',
-        note: 'Keep the math engine hot.',
-        startHour: 10,
-        blocks: ['Math', 'Math', 'Bio', 'Math', 'Physics', 'Math', 'Bio', 'Math', 'English', 'Math']
-      },
-      {
-        date: 'MAY 3',
-        title: 'Math exam → Bio start',
-        focus: 'Biology entry mode',
-        note: 'Switch cleanly into memory-heavy work.',
-        startHour: 10,
-        blocks: ['Biology MCQ', 'CQ', 'Zoology', 'Bio', 'Chem light', 'Bio', 'Physics', 'Bio', 'Math recap', 'Bio']
-      },
-      {
-        date: 'MAY 4',
-        title: 'Bio final',
-        focus: 'Final push cycle',
-        note: 'Revision lock. Do not overcomplicate.',
-        startHour: 10,
-        blocks: ['Bio MCQ', 'CQ', 'Zoology', 'Bio', 'Chem recap', 'Bio', 'Physics', 'English', 'Revision lock']
-      }
+      { date: 'APR 19', title: 'Night after college', focus: 'Light load + activation mode', note: 'Warm brain, not burnout. No deep problem sets yet.', startHour: 21, blocks: ['Physics SAQ', 'ICT MCQ', 'Bangla CQ', 'Math practice', 'Chemistry MCQ', 'Zoology MCQ', 'English format', 'Botany MCQ', 'Physics MCQ', 'ICT CQ'] },
+      { date: 'APR 20', title: 'College day', focus: 'Stabilize weak areas', note: 'Keep it controlled, no overload.', startHour: 21, blocks: ['Math matrices', 'Physics Chap 4 numericals', 'ICT logic gates', 'Bangla prose CQ', 'Chemistry MCQ', 'Zoology digestion', 'English writing format', 'Botany', 'Physics MCQ', 'Revision mix'] },
+      { date: 'APR 21', title: 'Full free day', focus: 'Heavy physics + math build', note: 'This day is full grind. Keep pressure high until late night.', startHour: 10, blocks: ['Physics numericals', 'Math problem set', 'Physics SAQ', 'Math trig', 'Chemistry MCQ', 'Physics MCQ', 'Math practice', 'Physics review', 'Physics Chap 5', 'Physics Chap 6', 'Physics Chap 10 rotation', 'ICT CQ', 'Bangla', 'Physics past paper', 'Math long drill', 'Chemistry CQ', 'Zoology', 'Physics weak zones', 'English', 'Bio', 'Physics final drill', 'Math final drill', 'Chem recap', 'ICT recap', 'Physics speed round', 'Math speed round', 'Revision lock'] },
+      { date: 'APR 22', title: 'Full free day + ICT prep', focus: 'Physics / Math patching, ICT night lock-in', note: 'Daytime stays useful. ICT gets the night push.', startHour: 10, blocks: ['Physics weak topic patch', 'Math weak topic patch', 'Physics SAQ', 'Math revision', 'Physics MCQ', 'Light summary review', 'ICT CQ', 'ICT MCQ', 'ICT revision', 'Bangla', 'ICT', 'English', 'ICT', 'Physics light', 'ICT CQ', 'ICT MCQ', 'ICT revision', 'Physics numericals', 'Math problem set', 'ICT speed run', 'Physics recap', 'Math recap', 'ICT final lock', 'Revision lock'] },
+      { date: 'APR 23', title: 'ICT exam day', focus: 'After exam, switch to Chemistry', note: 'Chemistry starts domination immediately at night.', startHour: 10, blocks: ['Chemistry MCQ', 'CQ', 'Chemistry past paper', 'Physics light', 'Chemistry', 'Math', 'Biology', 'Chemistry', 'English'] },
+      { date: 'APR 24', title: 'Chemistry core day 1', focus: 'Chem heavy grinding', note: 'Stick to the rotation and keep weak zones moving.', startHour: 10, blocks: ['Chem MCQ', 'CQ', 'Physics', 'Chem past paper', 'Math', 'Chem', 'Bio', 'Chem', 'ICT light', 'Chem', 'Chem recap'] },
+      { date: 'APR 25', title: 'Chemistry core day 2', focus: 'Chem heavy grinding', note: 'Keep the pressure clean and steady.', startHour: 10, blocks: ['Chem MCQ', 'CQ', 'Physics', 'Chem past paper', 'Math', 'Chem', 'Bio', 'Chem', 'ICT light', 'Chem', 'Chem recap'] },
+      { date: 'APR 26', title: 'Chem done / Bangla shift', focus: 'Bangla survival + English scoring formats', note: 'Start writing speed and grammar structure.', startHour: 10, blocks: ['Bangla', 'English', 'Bangla', 'Physics', 'Bangla', 'Chem recap', 'English', 'Bangla', 'Physics', 'Math'] },
+      { date: 'APR 27', title: 'Bangla exam', focus: 'Night shift English prep', note: 'English scoring templates only.', startHour: 10, blocks: ['English format', 'Bangla review', 'English writing', 'Physics', 'English', 'Chem', 'English', 'Math', 'Bio light'] },
+      { date: 'APR 28', title: 'English exam → Physics shift', focus: 'Full physics dominance starts', note: 'Physics chapters 4, 5, 6, 10 rotation.', startHour: 10, blocks: ['Physics Chap 4', 'Physics Chap 5', 'Physics Chap 6', 'Physics Chap 10', 'Physics SAQ', 'Physics MCQ', 'Math', 'Physics numericals', 'Chem light', 'Physics', 'Bio', 'Physics', 'ICT recall', 'Physics review'] },
+      { date: 'APR 29', title: 'Physics gap day', focus: 'Pure physics mode', note: 'Speed, accuracy, and weak zone cleanup.', startHour: 10, blocks: ['Physics numericals', 'Physics SAQ', 'Physics MCQ', 'Physics past paper', 'Math', 'Physics', 'Physics weak zones', 'Bio light', 'Physics', 'Revision'] },
+      { date: 'APR 30', title: 'Physics exam → Math start', focus: 'Math first paper and second paper', note: 'Keep the momentum alive.', startHour: 10, blocks: ['Math 1st paper', 'Math 2nd paper', 'Physics recap', 'Math', 'Bio', 'Math', 'Chem light', 'Math', 'English', 'Math'] },
+      { date: 'MAY 1', title: 'Math core day 1', focus: 'Speed + accuracy', note: 'Long grind day. This one now goes late.', startHour: 10, blocks: ['Math', 'Math', 'Bio', 'Math', 'Physics', 'Math', 'Bio', 'Math', 'English', 'Math', 'Math hard set', 'Physics quick revision', 'Math proof drill', 'Bio recap', 'Math past paper', 'English format', 'Math final sprint', 'Revision lock'] },
+      { date: 'MAY 2', title: 'Math core day 2', focus: 'Speed + accuracy', note: 'Keep the math engine hot.', startHour: 10, blocks: ['Math', 'Math', 'Bio', 'Math', 'Physics', 'Math', 'Bio', 'Math', 'English', 'Math', 'Math hard set', 'Physics quick revision', 'Math proof drill', 'Bio recap', 'Math past paper', 'English format', 'Math final sprint', 'Revision lock'] },
+      { date: 'MAY 3', title: 'Math exam → Bio start', focus: 'Biology entry mode', note: 'Switch cleanly into memory-heavy work.', startHour: 10, blocks: ['Biology MCQ', 'CQ', 'Zoology', 'Bio', 'Chem light', 'Bio', 'Physics', 'Bio', 'Math recap', 'Bio'] },
+      { date: 'MAY 4', title: 'Bio final', focus: 'Final push cycle', note: 'Revision lock. Do not overcomplicate.', startHour: 10, blocks: ['Bio MCQ', 'CQ', 'Zoology', 'Bio', 'Chem recap', 'Bio', 'Physics', 'English', 'Revision lock'] }
     ];
 
     function parseClock(value) {
@@ -267,19 +155,9 @@
         { label: 'Asr', start: p.asr, duration: 20 },
         { label: 'Maghrib', start: p.maghrib, duration: 20 },
         { label: 'Isha', start: p.isha, duration: 20 }
-      ].map(item => ({
-        label: item.label,
-        start: parseClock(item.start),
-        end: parseClock(item.start) + item.duration,
-        kind: 'prayer'
-      }));
+      ].map(item => ({ label: item.label, start: parseClock(item.start), end: parseClock(item.start) + item.duration, kind: 'prayer' }));
 
-      const meals = mealWindows.map(item => ({
-        label: item.label,
-        start: parseClock(item.start),
-        end: parseClock(item.start) + item.duration,
-        kind: 'meal'
-      }));
+      const meals = mealWindows.map(item => ({ label: item.label, start: parseClock(item.start), end: parseClock(item.start) + item.duration, kind: 'meal' }));
 
       return [...prayerBlocks, ...meals].sort((a, b) => a.start - b.start);
     }
@@ -333,6 +211,11 @@
       `;
     }
 
+    function splitIntoTwoColumns(items) {
+      const midpoint = Math.ceil(items.length / 2);
+      return [items.slice(0, midpoint), items.slice(midpoint)];
+    }
+
     const daysEl = document.getElementById('days');
     let total = 0;
 
@@ -340,7 +223,6 @@
       const card = document.createElement('section');
       card.className = 'day-card glass soft-shadow rounded-3xl p-5 md:p-6 border border-slate-800';
       const windows = buildFixedWindows(day.date);
-
       let currentMinutes = (day.startHour ?? 9) * 60;
       let studyCount = 0;
       const items = [];
@@ -351,24 +233,26 @@
           const blocking = windows.filter(w => currentMinutes < w.end && (start > w.start));
           if (blocking.length) {
             const names = [...new Set(blocking.map(b => b.label))].join(' + ');
-            items.push(`
-              <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('forced')}">
-                <div class="mt-1 h-4 w-4 rounded-full border border-emerald-300/60 bg-emerald-300/20"></div>
-                <div class="flex-1 text-sm md:text-base leading-6">
-                  ${formatClock(currentMinutes)} - Auto shift for ${names}
+            items.push({
+              html: `
+                <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('forced')}">
+                  <div class="mt-1 h-4 w-4 rounded-full border border-emerald-300/60 bg-emerald-300/20"></div>
+                  <div class="flex-1 text-sm md:text-base leading-6">${formatClock(currentMinutes)} - Auto shift for ${names}</div>
                 </div>
-              </div>
-            `);
+              `
+            });
           }
         }
 
         const id = `d${dayIndex}_t${index}`;
-        items.push(`
-          <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('study')}">
-            <input id="${id}" class="task mt-1 h-4 w-4 rounded border-slate-500 bg-slate-900 text-sky-400 focus:ring-sky-400" type="checkbox" />
-            <label for="${id}" class="cursor-pointer flex-1 text-sm md:text-base leading-6">${formatClock(start)} - ${text}</label>
-          </div>
-        `);
+        items.push({
+          html: `
+            <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('study')}">
+              <input id="${id}" class="task mt-1 h-4 w-4 rounded border-slate-500 bg-slate-900 text-sky-400 focus:ring-sky-400" type="checkbox" />
+              <label for="${id}" class="cursor-pointer flex-1 text-sm md:text-base leading-6">${formatClock(start)} - ${text}</label>
+            </div>
+          `
+        });
 
         total += 1;
         currentMinutes = start + 25;
@@ -376,15 +260,19 @@
 
         if (index < day.blocks.length - 1) {
           const breakLen = nextBreakLength(studyCount);
-          items.push(`
-            <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('break')}">
-              <div class="mt-1 h-4 w-4 rounded-full border border-amber-300/60 bg-amber-300/20"></div>
-              <div class="flex-1 text-sm md:text-base leading-6">${formatClock(currentMinutes)} - ${breakLen} min ${breakLen === 15 ? 'reset' : 'break'}</div>
-            </div>
-          `);
+          items.push({
+            html: `
+              <div class="flex items-start gap-3 rounded-2xl border px-3 py-3 ${blockClass('break')}">
+                <div class="mt-1 h-4 w-4 rounded-full border border-amber-300/60 bg-amber-300/20"></div>
+                <div class="flex-1 text-sm md:text-base leading-6">${formatClock(currentMinutes)} - ${breakLen} min ${breakLen === 15 ? 'reset' : 'break'}</div>
+              </div>
+            `
+          });
           currentMinutes += breakLen;
         }
       });
+
+      const [leftItems, rightItems] = splitIntoTwoColumns(items);
 
       card.innerHTML = `
         <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -402,7 +290,10 @@
         ${renderPrayerPanel(day.date)}
         ${renderMealPanel()}
 
-        <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">${items.join('')}</div>
+        <div class="mt-5 grid gap-3 md:grid-cols-2">
+          <div class="grid gap-3">${leftItems.map(x => x.html).join('')}</div>
+          <div class="grid gap-3">${rightItems.map(x => x.html).join('')}</div>
+        </div>
       `;
 
       daysEl.appendChild(card);
